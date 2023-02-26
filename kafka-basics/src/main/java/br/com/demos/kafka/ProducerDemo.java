@@ -2,14 +2,11 @@ package br.com.demos.kafka;
 
 
 import br.com.demos.kafka.config.ClusterProperties;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +20,7 @@ public class ProducerDemo {
 
 
     @Autowired
-    public void setClusterProperties(ClusterProperties clusterProperties){
+    public void setClusterProperties(ClusterProperties clusterProperties) {
         ProducerDemo.clusterProperties = clusterProperties;
     }
 
@@ -42,24 +39,37 @@ public class ProducerDemo {
 
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
-        ProducerRecord<String, String> producerRecord =
-                new ProducerRecord<>("demo_java", "hello world");
+        for (int j = 0; j < 2; j++) {
 
-        producer.send(producerRecord, new Callback() {
-            @Override
-            public void onCompletion(RecordMetadata metadata, Exception e) {
-                if (e == null){
-                    System.out.println("Received new metadata \n"+
-                            "Topic: " + metadata.topic() + "\n"+
-                            "Partition: " + metadata.partition() + "\n"+
-                            "Offset: " + metadata.offset() + "\n"+
-                            "Timestamp: " + metadata.timestamp() + "\n"
-                    );
-                }else{
-                    System.err.println("Error while producing " + e);
-                }
+            for (int i = 0; i < 10; i++) {
+
+                String topic = "demo_java";
+                String key = "id_" + i;
+                String value = "batata world " + i;
+
+                ProducerRecord<String, String> producerRecord =
+                        new ProducerRecord<>(topic, key, value);
+
+                producer.send(producerRecord, new Callback() {
+                    @Override
+                    public void onCompletion(RecordMetadata metadata, Exception e) {
+                        if (e == null) {
+                            System.out.println("Partition: " + metadata.partition()  + " Key: " + key );
+                        } else {
+                            System.err.println("Error while producing " + e);
+                        }
+                    }
+                });
             }
-        });
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
 
         producer.flush();
 
