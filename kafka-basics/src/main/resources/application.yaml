@@ -1,0 +1,11 @@
+
+bootstrap:
+  servers: "cluster.playground.cdkt.io:9092"
+
+security:
+  protocol: "SASL_SSL"
+
+sasl:
+  jaas:
+    config: ${SASL_CONFIG}
+  mechanism: "PLAIN"
