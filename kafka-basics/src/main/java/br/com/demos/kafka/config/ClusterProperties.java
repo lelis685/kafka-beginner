@@ -1,8 +1,10 @@
 package br.com.demos.kafka.config;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
 @Configuration
 public class ClusterProperties {
 
@@ -18,19 +20,4 @@ public class ClusterProperties {
     @Value("${sasl.mechanism}")
     private String saslMechanism;
 
-    public String getBootstrapServers() {
-        return bootstrapServers;
-    }
-
-    public String getSecurityProtocol() {
-        return securityProtocol;
-    }
-
-    public String getSaslJaasConfig() {
-        return saslJaasConfig;
-    }
-
-    public String getSaslMechanism() {
-        return saslMechanism;
-    }
 }
